@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%- include('./components/head') %>
+  <body>
+    <main>
+      <form action="" method="post">
+          <label>Name:</label>
+          <input name="name" type="text">
+          <label>Message:</label>
+          <input name="message" type="text">
+          <button type="submit">Send</button>
+      </form>
+      <div id="messages">
+        <% for(let msg of msgs) { %>
+        <div class="message">
+          <div class="user"><%= msg.name %></div>
+          <div class="content"><%= msg.message %></div>
+        </div>
+        <% }%>    
+      </div>
+    </main>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+    var socket = io();
+    const messages = document.querySelector("#messages")
+    const messageUI = (name, msg) => {
+      const newMsgDiv = document.createElement("div");
+      const newUserDiv = document.createElement("div");
+      const newContentDiv = document.createElement("div");
+
+      newMsgDiv.className = "message";
+      newUserDiv.className = "user";
+      newContentDiv.className = "content";
+
+      newUserDiv.innerHTML = name
+      newContentDiv.innerHTML = msg
+
+      newMsgDiv.appendChild(newUserDiv)
+      newMsgDiv.appendChild(newContentDiv)
+      messages.appendChild(newMsgDiv)
+    }
+
+    socket.on('chat msg', (data) => {
+      messageUI(data.name, data.message)
+    })
+    </script>
+  </body>
+</html>
